@@ -1,0 +1,69 @@
+:root {
+  --navy: #0B1F3A; --teal: #0EA5A0; --gold: #C9A227; --ink: #1F2937; --muted: #6B7280;
+  --line: #E5E7EB; --bg: #F5F6F8; --card: #fff; --ok: #0F8A5F; --bad: #B42318;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 'Be Vietnam Pro', system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+a { color: inherit; }
+.wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+.top { background: #fff; border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.brand img { height: 30px; display: block; }
+.toplink { font-size: 14px; font-weight: 500; text-decoration: none; color: var(--navy); }
+.toplink:hover { text-decoration: underline; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 32px; padding-top: 36px; padding-bottom: 48px; flex: 1; align-items: start; }
+.viewer .frame { display: block; position: relative; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 2px rgba(16,24,40,.06), 0 12px 32px rgba(16,24,40,.10); }
+.viewer img { width: 100%; height: auto; display: block; }
+.revoked-stamp { position: absolute; inset: 0; display: grid; place-items: center; font: 700 64px/1 'Be Vietnam Pro'; letter-spacing: 8px; color: rgba(180,35,24,.85); background: rgba(255,255,255,.55); transform: rotate(-12deg); }
+
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 28px; position: sticky; top: 24px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 5px 10px; border-radius: 999px; }
+.badge.ok { color: var(--ok); background: #E7F6EF; }
+.badge.bad { color: var(--bad); background: #FDECEA; }
+.kicker { margin: 18px 0 2px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); }
+.panel h1 { margin: 0; font: 600 30px/1.2 'Playfair Display', serif; color: var(--navy); }
+.course { margin: 12px 0 0; font-size: 18px; font-weight: 600; }
+.sub { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.proj { margin: 14px 0 0; padding: 10px 12px; background: #FBF7EA; border-left: 3px solid var(--gold); border-radius: 4px; font-size: 14px; }
+.proj span { display: block; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.facts { margin: 20px 0 0; display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 18px; }
+.facts div { display: flex; justify-content: space-between; gap: 12px; }
+.facts dt { color: var(--muted); font-size: 13.5px; }
+.facts dd { margin: 0; font-weight: 500; font-size: 14px; text-align: right; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .5px; }
+.skills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.skills span { font-size: 12.5px; padding: 4px 10px; border-radius: 999px; background: #EEF2F7; color: var(--navy); }
+.actions { display: grid; gap: 10px; margin-top: 24px; }
+.actions .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: #fff; font: 500 14px 'Be Vietnam Pro', sans-serif; color: var(--ink); text-decoration: none; cursor: pointer; text-align: center; }
+.btn:hover { border-color: #C5CBD3; background: #FAFAFB; }
+.btn.primary { background: #0A66C2; border-color: #0A66C2; color: #fff; font-weight: 600; }
+.btn.primary:hover { background: #004182; }
+.btn.ghost { background: transparent; }
+
+.foot { border-top: 1px solid var(--line); background: #fff; font-size: 13px; color: var(--muted); }
+.foot .wrap { display: flex; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap; }
+
+/* verify / 404 pages */
+.center { flex: 1; display: grid; place-items: center; padding: 48px 16px; }
+.lookup { width: 100%; max-width: 520px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 36px; text-align: center; }
+.lookup h1 { margin: 0 0 6px; font: 600 30px/1.2 'Playfair Display', serif; color: var(--navy); }
+.lookup p { margin: 0 0 22px; color: var(--muted); }
+.lookup form { display: flex; gap: 8px; }
+.lookup input { flex: 1; min-width: 0; height: 46px; border: 1px solid var(--line); border-radius: 8px; padding: 0 14px; font: 500 15px ui-monospace, Menlo, monospace; text-transform: uppercase; }
+.lookup input:focus { outline: 2px solid var(--teal); outline-offset: 1px; }
+.lookup .btn.primary { background: var(--navy); border-color: var(--navy); }
+
+@media (max-width: 960px) {
+  .grid { grid-template-columns: 1fr; padding-top: 20px; gap: 20px; }
+  .panel { position: static; }
+}
+@media (max-width: 480px) {
+  .wrap { padding: 0 16px; }
+  .panel { padding: 20px; }
+  .actions .row { grid-template-columns: 1fr; }
+  .lookup { padding: 24px; }
+  .lookup form { flex-direction: column; }
+}
