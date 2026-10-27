@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="{{ root }}assets/fonts/fonts.css">
+<style>
+  @page { size: 297mm 210mm; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1123px; height: 794px; }
+  body { background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cert {
+    --navy: #0B1F3A; --teal: #0EA5A0; --gold: #C9A227; --ink: #1F2937; --muted: #6B7280; --paper: #FCFBF7;
+    width: 1123px; height: 794px; position: relative; overflow: hidden;
+    background: var(--paper); font-family: 'Be Vietnam Pro', sans-serif; color: var(--ink);
+    display: grid; grid-template-columns: 300px 1fr;
+  }
+  /* left panel */
+  .side {
+    background: var(--navy); color: #E5ECF5; position: relative;
+    display: flex; flex-direction: column; align-items: center; padding: 56px 32px 44px;
+  }
+  .side::after { content: ""; position: absolute; top: 0; right: 0; width: 6px; height: 100%;
+    background: linear-gradient(var(--gold), #E9CF6B 50%, var(--gold)); }
+  .side .logo { width: 196px; height: auto; filter: brightness(0) invert(1); opacity: .95; }
+  .seal { margin-top: 64px; width: 168px; height: 168px; border-radius: 50%;
+    border: 2px solid var(--gold); display: grid; place-items: center; position: relative; }
+  .seal::before { content: ""; position: absolute; inset: 9px; border-radius: 50%; border: 1px dashed rgba(201,162,39,.7); }
+  .seal .in { text-align: center; line-height: 1.15; }
+  .seal .k { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 700; color: var(--gold); }
+  .seal .t { font-size: 10.5px; letter-spacing: 3px; text-transform: uppercase; color: #C8D3E2; margin-top: 6px; }
+  .verify { margin-top: auto; text-align: center; }
+  .qr { width: 112px; height: 112px; background: #fff; padding: 7px; border-radius: 6px; margin: 0 auto 12px; }
+  .qr img { width: 100%; height: 100%; display: block; }
+  .verify .lbl { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: #9FB0C7; }
+  .verify .id { font-size: 13.5px; font-weight: 600; letter-spacing: 1px; color: #fff; margin-top: 4px; }
+  .verify .url { font-size: 10.5px; color: #9FB0C7; margin-top: 3px; }
+  /* main */
+  .main { padding: 64px 72px 52px 68px; display: flex; flex-direction: column; position: relative; }
+  .main::before { content: ""; position: absolute; inset: 22px 22px 22px 22px; border: 1px solid rgba(201,162,39,.55); pointer-events: none; }
+  .main::after { content: ""; position: absolute; inset: 28px; border: 1px solid rgba(201,162,39,.25); pointer-events: none; }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; color: var(--teal); }
+  .title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 46px; color: var(--navy); margin-top: 10px; line-height: 1.1; }
+  .rule { width: 84px; height: 3px; background: var(--gold); margin: 22px 0 26px; }
+  .lead { font-size: 15px; color: var(--muted); }
+  .name { font-family: 'Playfair Display', serif; font-weight: 600; color: var(--navy); line-height: 1.12; margin-top: 8px;
+    font-size: {{ name_size }}px; }
+  .body { font-size: 15px; color: var(--muted); margin-top: 18px; max-width: 640px; line-height: 1.55; }
+  .course { font-size: 27px; font-weight: 700; color: var(--ink); margin-top: 8px; line-height: 1.25; max-width: 680px; }
+  .project { margin-top: 12px; font-size: 15px; color: var(--ink); }
+  .project em { font-family: 'Playfair Display', serif; font-style: italic; font-size: 17px; color: var(--navy); }
+  .meta { display: flex; gap: 40px; margin-top: auto; align-items: flex-end; }
+  .meta .m .k { font-size: 10.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); }
+  .meta .m .v { font-size: 15px; font-weight: 600; color: var(--ink); margin-top: 5px; }
+  .sign { margin-left: auto; text-align: center; min-width: 220px; }
+  .sign .sig { font-family: 'Great Vibes', cursive; font-size: 40px; color: var(--navy); line-height: 1; height: 50px; display: flex; align-items: flex-end; justify-content: center; }
+  .sign .sig img { max-height: 56px; max-width: 220px; }
+  .sign .line { height: 1px; background: #9CA3AF; margin: 6px 0 8px; }
+  .sign .n { font-size: 14px; font-weight: 600; }
+  .sign .r { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .skills { margin-top: 34px; }
+  .skills .k { font-size: 10.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; max-width: 660px; }
+  .chips span { font-size: 13px; font-weight: 500; color: var(--navy); border: 1px solid rgba(11,31,58,.18); background: #fff; padding: 5px 12px; border-radius: 999px; }
+  .watermark { position: absolute; right: -40px; bottom: -60px; width: 420px; opacity: .045; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="cert">
+  <aside class="side">
+    <img class="logo" src="{{ logo_src }}" alt="{{ issuer.name }}">
+    <div class="seal"><div class="in">
+      <div class="k">{{ course.hours }}h</div>
+      <div class="t">{{ course.sessions }} sessions</div>
+      <div class="t" style="margin-top:2px">{{ issue_year }}</div>
+    </div></div>
+    <div class="verify">
+      <div class="qr"><img src="{{ qr_src }}" alt="QR"></div>
+      <div class="lbl">Certificate ID</div>
+      <div class="id">{{ cert.id }}</div>
+      <div class="url">{{ short_url }}</div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="eyebrow">{{ issuer.name }} Academy</div>
+    <h1 class="title">{{ ctype.title }}</h1>
+    <div class="rule"></div>
+    <div class="lead">{{ ctype.lead }}</div>
+    <div class="name">{{ cert.name }}</div>
+    <div class="body">{{ ctype.body }}</div>
+    <div class="course">{{ course.name }}</div>
+    {% if cert.project %}<div class="project">Final project: <em>{{ cert.project }}</em></div>{% endif %}
+    {% if course.skills %}<div class="skills"><div class="k">Skills covered</div><div class="chips">{% for k in course.skills %}<span>{{ k }}</span>{% endfor %}</div></div>{% endif %}
+    <div class="meta">
+      <div class="m"><div class="k">Issued</div><div class="v">{{ issue_date_long }}</div></div>
+      <div class="m"><div class="k">Length</div><div class="v">{{ course.hours }} hours</div></div>
+      {% for s in signers[:1] %}
+      <div class="sign">
+        <div class="sig">{% if s.signature_image %}<img src="{{ root }}{{ s.signature_image }}" alt="">{% else %}{{ s.name }}{% endif %}</div>
+        <div class="line"></div>
+        <div class="n">{{ s.name }}</div>
+        <div class="r">{{ s.title }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} · {{ issuer.name }}</title>
+<meta name="robots" content="{{ robots }}">
+<link rel="icon" href="{{ root }}assets/favicon.svg">
+<link rel="stylesheet" href="{{ root }}assets/fonts/fonts.css">
+<link rel="stylesheet" href="{{ root }}assets/site.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="{{ issuer.website }}" class="brand"><img src="{{ root }}assets/logo.svg" alt="{{ issuer.name }}"></a>
+  <a href="{{ issuer.website }}" class="toplink">{{ issuer.website | replace('https://','') }}</a>
+</div></header>
+<div class="center">
+  <div class="lookup">
+    <h1>{{ title }}</h1>
+    <p>{{ message }}</p>
+    <form id="f" autocomplete="off">
+      <input id="q" name="id" placeholder="{{ id_prefix }}-XXXXXXXX" aria-label="Certificate ID" required>
+      <button class="btn primary" type="submit">Verify</button>
+    </form>
+  </div>
+</div>
+<footer class="foot"><div class="wrap"><span>© {{ year }} {{ issuer.name }}</span><span>Official certificate registry</span></div></footer>
+<script>
+document.getElementById('f').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var id = document.getElementById('q').value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  if (id) location.href = '/' + id + '/';
+});
+</script>
+</body>
+</html>
