@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ cert.name }} · {{ ctype.title }} · {{ issuer.name }}</title>
+<meta name="description" content="{{ cert.name }} {{ 'completed' if cert.type == 'completion' else 'participated in' }} {{ course.name }} by {{ issuer.name }}. Certificate ID {{ cert.id }}.">
+<link rel="canonical" href="{{ cert_url }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ issuer.name }} Certificates">
+<meta property="og:title" content="{{ cert.name }} – {{ ctype.title }}: {{ course.name }}">
+<meta property="og:description" content="Issued by {{ issuer.name }} on {{ issue_date_long }} · ID {{ cert.id }}">
+<meta property="og:url" content="{{ cert_url }}">
+<meta property="og:image" content="{{ cert_url }}og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="{{ 'noindex' if cert.status == 'revoked' else 'index,follow' }}">
+<link rel="icon" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/fonts/fonts.css">
+<link rel="stylesheet" href="../assets/site.css">
+<script type="application/ld+json">{{ jsonld | safe }}</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="{{ issuer.website }}" class="brand"><img src="../assets/logo.svg" alt="{{ issuer.name }}"></a>
+  <a href="../" class="toplink">Verify a certificate</a>
+</div></header>
+
+<main class="wrap grid">
+  <section class="viewer">
+    <a href="certificate.pdf" target="_blank" rel="noopener" class="frame">
+      <img src="certificate.png" alt="{{ ctype.title }} – {{ cert.name }}" width="2246" height="1588">
+      {% if cert.status == 'revoked' %}<span class="revoked-stamp">REVOKED</span>{% endif %}
+    </a>
+  </section>
+
+  <aside class="panel">
+    {% if cert.status == 'revoked' %}
+    <div class="badge bad">✕ This certificate has been revoked</div>
+    {% else %}
+    <div class="badge ok"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10 1.5 12.4 3l2.8.2.9 2.7 2 2-1 2.6.3 2.8-2.4 1.5-1.2 2.6-2.8-.3L10 18.5 7.6 17l-2.8.2-.9-2.7-2-2 1-2.6L2.6 7.1 5 5.6l1.2-2.6 2.8.3z"/><path d="m6.5 10 2.4 2.4 4.6-4.8" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg> Verified certificate</div>
+    {% endif %}
+    <p class="kicker">{{ ctype.title }}</p>
+    <h1>{{ cert.name }}</h1>
+    <p class="course">{{ course.name }}</p>
+    {% if course.subtitle %}<p class="sub">{{ course.subtitle }}</p>{% endif %}
+    {% if cert.project %}<p class="proj"><span>Final project</span>{{ cert.project }}</p>{% endif %}
+
+    <dl class="facts">
+      <div><dt>Issued by</dt><dd>{{ issuer.name }}</dd></div>
+      <div><dt>Issue date</dt><dd>{{ issue_date_long }}</dd></div>
+      <div><dt>Length</dt><dd>{{ course.hours }} hours · {{ course.sessions }} sessions</dd></div>
+      <div><dt>Certificate ID</dt><dd class="mono">{{ cert.id }}</dd></div>
+    </dl>
+
+    {% if course.skills %}<div class="skills">{% for s in course.skills %}<span>{{ s }}</span>{% endfor %}</div>{% endif %}
+
+    {% if cert.status != 'revoked' %}
+    <div class="actions">
+      <a class="btn primary" href="{{ linkedin_add_url }}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4V21H3zM9.5 9.75h3.8v1.6h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1V21h-4v-4.95c0-1.18-.02-2.7-1.65-2.7-1.65 0-1.9 1.29-1.9 2.62V21h-4z"/></svg>
+        Add to LinkedIn profile</a>
+      <div class="row">
+        <a class="btn" href="certificate.pdf" download="{{ file_stem }}.pdf">Download PDF</a>
+        <a class="btn" href="certificate.png" download="{{ file_stem }}.png">Download PNG</a>
+      </div>
+      <div class="row">
+        <a class="btn ghost" href="https://www.linkedin.com/sharing/share-offsite/?url={{ cert_url | urlencode }}" target="_blank" rel="noopener">Share · LinkedIn</a>
+        <a class="btn ghost" href="https://www.facebook.com/sharer/sharer.php?u={{ cert_url | urlencode }}" target="_blank" rel="noopener">Share · Facebook</a>
+      </div>
+      <button class="btn ghost copy" type="button" data-url="{{ cert_url }}">Copy certificate link</button>
+    </div>
+    {% endif %}
+  </aside>
+</main>
+
+<footer class="foot"><div class="wrap">
+  <span>© {{ issue_year }} {{ issuer.name }}. This page is the official record of this certificate.</span>
+  <a href="{{ issuer.website }}">{{ issuer.website | replace('https://','') }}</a>
+</div></footer>
+
+<script>
+document.querySelectorAll('.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var u = b.getAttribute('data-url'), t = b.textContent;
+    var done = function () { b.textContent = 'Link copied ✓'; setTimeout(function () { b.textContent = t; }, 1800); };
+    if (navigator.clipboard) navigator.clipboard.writeText(u).then(done, function () { prompt('Copy link:', u); });
+    else { prompt('Copy link:', u); }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "base_url": "https://certificate.datalize.cloud",
+  "id_prefix": "DLZ",
+  "issuer": {
+    "name": "Datalize",
+    "website": "https://datalize.cloud",
+    "linkedin_org_id": "",
+    "logo": "assets/logo.svg"
+  },
+  "signers": [
+    {
+      "name": "Kha Nguyen",
+      "title": "Lead Instructor, Datalize",
+      "signature_image": ""
+    }
+  ],
+  "courses": {
+    "PBI": {
+      "name": "Power BI for Business Users",
+      "subtitle": "From raw data to self-service dashboards",
+      "hours": 32,
+      "sessions": 8,
+      "skills": ["Power Query", "Data Modeling", "DAX", "Dashboard Design", "SharePoint Data Sources"]
+    }
+  },
+  "types": {
+    "completion": {
+      "title": "Certificate of Completion",
+      "lead": "This certifies that",
+      "body": "has successfully completed the course and delivered the final project"
+    },
+    "participation": {
+      "title": "Certificate of Participation",
+      "lead": "This certifies that",
+      "body": "has actively participated in the course"
+    }
+  }
+}
