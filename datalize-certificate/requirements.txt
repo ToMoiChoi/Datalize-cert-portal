@@ -1,0 +1,5 @@
+jinja2
+qrcode
+pillow
+playwright
+rsa
