@@ -1,15 +1,20 @@
 {
   "base_url": "https://certificate.datalize.cloud",
   "id_prefix": "DLZ",
+  "sheet": {
+    "id": "1og9gE92u1plMpU_h2UX-qae2H-_LMCWySWZmR8mAlbw",
+    "tab": "Students",
+    "credentials": "data/service-account.json"
+  },
   "issuer": {
     "name": "Datalize",
     "website": "https://datalize.cloud",
     "linkedin_org_id": "",
-    "logo": "assets/logo.svg"
+    "logo": "assets/logo-dark.png"
   },
   "signers": [
     {
-      "name": "Kha Nguyen",
+      "name": "Đỗ Văn Khả",
       "title": "Lead Instructor, Datalize",
       "signature_image": ""
     }
@@ -18,9 +23,20 @@
     "PBI": {
       "name": "Power BI for Business Users",
       "subtitle": "From raw data to self-service dashboards",
-      "hours": 32,
+      "hours": 16,
       "sessions": 8,
-      "skills": ["Power Query", "Data Modeling", "DAX", "Dashboard Design", "SharePoint Data Sources"]
+      "skills": [
+        "Microsoft Power BI",
+        "DAX",
+        "Data Modeling (Star Schema)",
+        "Time Intelligence",
+        "Data Visualization",
+        "Dashboard Design",
+        "Power BI Service",
+        "Row-Level Security (RLS)",
+        "KPI Reporting",
+        "Data Storytelling"
+      ]
     }
   },
   "types": {

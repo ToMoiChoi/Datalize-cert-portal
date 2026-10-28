@@ -9,7 +9,7 @@ a { color: inherit; }
 .wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 24px; }
 .top { background: #fff; border-bottom: 1px solid var(--line); }
 .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-.brand img { height: 30px; display: block; }
+.brand img { height: 44px; display: block; }
 .toplink { font-size: 14px; font-weight: 500; text-decoration: none; color: var(--navy); }
 .toplink:hover { text-decoration: underline; }
 
