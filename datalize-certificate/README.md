@@ -23,9 +23,10 @@ Muốn chạy bằng dòng lệnh thì dùng `%LOCALAPPDATA%\datalize-cert\venv\
    - cấp ID và render cert (PNG, PDF, trang web, QR) cho mọi dòng **Ready**;
    - ghi ngược `cert_id`, `cert_link`, `issued_at` vào Sheet và đổi status sang **Issued**;
    - dòng nào sai dữ liệu thì ghi `Lỗi: ...` vào cột `note` và giữ nguyên Ready. Sửa xong thì bấm `issue.bat` lại;
-   - tải về các cert mà trainer khác đã cấp (hoặc vừa đổi sang Revoked), để `site/` trên máy bạn luôn đầy đủ.
-4. Kiểm tra cert mới trong `site/<ID>/` theo checklist ở mục 8.
-5. Upload thư mục `site/` lên hosting (mục 9), rồi gửi `cert_link` cho học viên.
+   - tải về các cert mà trainer khác đã cấp (hoặc vừa đổi sang Revoked), để `site/` trên máy bạn luôn đầy đủ;
+   - **Tự động tăng số phiên (+1)**, commit mã nguồn/dữ liệu và push lên branch **`main`**;
+   - **Tự động trích xuất `site/` và push lên branch `deploy`** để hosting (Cloudflare Pages, GitHub Pages...) tự động phát hành web công khai.
+4. Kiểm tra trang cert trực tiếp tại link `cert_link` hoặc `site/<ID>/` rồi gửi link cho học viên.
 
 **Thu hồi cert cấp sai:** đổi status của dòng đó sang **Revoked** rồi bấm `issue.bat`; trang cert sẽ hiện REVOKED. Không xoá dòng và không xoá thư mục.
 
