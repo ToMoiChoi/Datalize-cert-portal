@@ -26,7 +26,18 @@ Muốn chạy bằng dòng lệnh thì dùng `%LOCALAPPDATA%\datalize-cert\venv\
    - tải về các cert mà trainer khác đã cấp (hoặc vừa đổi sang Revoked), để `site/` trên máy bạn luôn đầy đủ;
    - **Tự động tăng số phiên (+1)**, commit mã nguồn/dữ liệu và push lên branch **`main`**;
    - **Tự động trích xuất `site/` và push lên branch `deploy`** để hosting (Cloudflare Pages, GitHub Pages...) tự động phát hành web công khai.
-4. Kiểm tra trang cert trực tiếp tại link `cert_link` hoặc `site/<ID>/` rồi gửi link cho học viên.
+4. Kiểm tra trang cert trực tiếp tại link `cert_link` hoặc `site/<ID>/`.
+5. Gửi mail cho học viên: trong Sheet bấm menu **Datalize → Gửi thử 1 mail cho tôi** để xem trước, rồi **Datalize → Gửi mail certificate**. Xem mục 2b.
+
+### 2b. Gửi mail certificate (Apps Script trong Sheet)
+Mã nằm ở `apps-script/send_cert_mail.gs`. **Cài 1 lần:** đăng nhập Google bằng tài khoản Datalize → mở Sheet → **Extensions → Apps Script** → dán toàn bộ file → **Save** → tải lại Sheet. Lần đầu bấm menu, Google hỏi quyền gửi Gmail và sửa Sheet: chọn Allow.
+
+- Mail gửi từ tài khoản của **người bấm menu**, nên luôn bấm bằng tài khoản Datalize.
+- Chỉ gửi cho dòng `status = Issued`, có `email` (bỏ qua `@example.com`), có `cert_link`, và cột **`emailed_at`** còn trống. Gửi xong script ghi thời gian vào `emailed_at`, nên bấm lại không gửi trùng.
+- Gửi lại cho một người (vd. sau khi sửa tên và cấp lại): xoá ô `emailed_at` của dòng đó rồi bấm gửi.
+- Nội dung mail: tên học viên, khoá, link + mã cert, hướng dẫn tải PDF/PNG và **Add to LinkedIn profile**. Cột `review`/`note` **không** được đưa vào mail.
+- Gmail cá nhân gửi tối đa khoảng 100 mail/ngày qua Apps Script, Google Workspace khoảng 1.500. Script kiểm tra hạn mức trước khi gửi.
+- Sửa nội dung mail, tên khoá hoặc `replyTo` ở khối `CFG` đầu file, rồi dán lại vào Apps Script.
 
 **Thu hồi cert cấp sai:** đổi status của dòng đó sang **Revoked** rồi bấm `issue.bat`; trang cert sẽ hiện REVOKED. Không xoá dòng và không xoá thư mục.
 
@@ -105,6 +116,7 @@ Logo chính thức lấy từ datalize.cloud (đèn bàn + chữ DATALIZE + "GET
 | `assets/logo.png` | Header các trang web (`templates/page.html`, `templates/index.html`) | Navy `#083866`, tagline xám đậm |
 
 - Khi muốn thay logo, giữ nguyên 2 tên file trên, dùng PNG nền trong suốt, chiều rộng khoảng 900px, rồi `--rebuild`.
+- Favicon (`assets/favicon.ico`, `favicon.png`, `apple-touch-icon.png`) lấy đúng icon của datalize.cloud (logo vuông nền navy) để đồng bộ với web chính. Khi web chính đổi icon thì tạo lại 3 file này rồi `--rebuild`.
 - Đừng thêm CSS `filter` lên logo của certificate; bản `logo-dark.png` đã đúng màu thương hiệu.
 - Màu chủ đạo (trong `templates/certificate.html` và `assets/site.css`): navy `#0B1F3A`, gold `#C9A227`, teal `#0EA5A0`.
 - Font (đã tự host, có bộ ký tự tiếng Việt): Be Vietnam Pro (chữ thường), Playfair Display (tiêu đề, tên học viên), Great Vibes (chữ ký).
@@ -133,7 +145,7 @@ templates/
   certificate.html       mẫu certificate A4 ngang (1123×794) → PNG + PDF
   page.html              trang public của từng certificate
   index.html             trang tra cứu theo ID và trang 404
-assets/                  logo.png, logo-dark.png, favicon.svg, fonts/, site.css
+assets/                  logo.png, logo-dark.png, favicon.ico/png, apple-touch-icon.png, fonts/, site.css
 site/                    OUTPUT. Upload nguyên thư mục này
   index.html, 404.html, .htaccess, robots.txt
   <ID>/index.html        trang certificate

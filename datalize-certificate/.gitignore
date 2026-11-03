@@ -4,3 +4,4 @@ __pycache__/
 data/service-account.json
 .venv/
 data/powerbi_students/
+data/students.csv
