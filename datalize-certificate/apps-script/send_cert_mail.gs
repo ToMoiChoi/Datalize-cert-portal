@@ -18,6 +18,7 @@
  */
 
 const CFG = {
+  sheetId: '1og9gE92u1plMpU_h2UX-qae2H-_LMCWySWZmR8mAlbw',   // giống config.json → sheet.id
   tab: 'Students',
   senderName: 'Datalize',
   replyTo: '',            // vd. 'contact@datalize.cloud'; để trống thì học viên trả lời về tài khoản gửi
@@ -28,7 +29,9 @@ const CFG = {
 };
 
 function onOpen() {
-  SpreadsheetApp.getUi().createMenu('Datalize')
+  const ui = ui_();
+  if (!ui) return;   // chạy bằng nút Run trong trình soạn: không có Sheet để gắn menu
+  ui.createMenu('Datalize')
     .addItem('Gửi thử 1 mail cho tôi', 'sendTestToMe')
     .addItem('Gửi mail certificate', 'sendCertMails')
     .addSeparator()
@@ -44,13 +47,13 @@ function onOpen() {
 function enableAutoSend() {
   disableAutoSend_();
   ScriptApp.newTrigger('autoSendCertMails').timeBased().everyHours(1).create();
-  SpreadsheetApp.getUi().alert('Đã bật gửi tự động. Mỗi giờ script sẽ gửi mail cho các dòng Issued chưa gửi, '
+  notify_('Đã bật gửi tự động. Mỗi giờ script sẽ gửi mail cho các dòng Issued chưa gửi, '
     + 'từ tài khoản ' + Session.getActiveUser().getEmail() + '.');
 }
 
 function disableAutoSend() {
   const n = disableAutoSend_();
-  SpreadsheetApp.getUi().alert(n ? 'Đã tắt gửi tự động.' : 'Gửi tự động đang không bật.');
+  notify_(n ?'Đã tắt gửi tự động.' : 'Gửi tự động đang không bật.');
 }
 
 function disableAutoSend_() {
@@ -87,35 +90,49 @@ function isLive_(url) {
 
 /** Gửi mail của dòng đầu tiên đủ điều kiện tới chính người đang bấm, để xem trước. Không ghi emailed_at. */
 function sendTestToMe() {
-  const ui = SpreadsheetApp.getUi();
   const { rows } = pendingRows_();
-  if (!rows.length) return ui.alert('Không có dòng nào cần gửi.');
+  if (!rows.length) return notify_('Không có dòng nào cần gửi.');
   const me = Session.getActiveUser().getEmail();
-  if (!me) return ui.alert('Không lấy được email của bạn. Hãy chạy bằng tài khoản Google có quyền với Sheet này.');
+  if (!me) return notify_('Không lấy được email của bạn. Hãy chạy bằng tài khoản Google có quyền với Sheet này.');
   const msg = buildMail_(rows[0]);
   GmailApp.sendEmail(me, '[THỬ] ' + msg.subject, msg.text, mailOptions_(msg.html));
-  ui.alert('Đã gửi mail thử (nội dung của ' + rows[0].name + ') tới ' + me + '.');
+  notify_('Đã gửi mail thử (nội dung của ' + rows[0].name + ') tới ' + me + '.');
 }
 
-/** Gửi cho mọi dòng đủ điều kiện, sau khi hỏi xác nhận. */
+/** Gửi cho mọi dòng đủ điều kiện. Bấm từ menu thì hỏi xác nhận; bấm Run trong trình soạn thì gửi luôn. */
 function sendCertMails() {
-  const ui = SpreadsheetApp.getUi();
+  const ui = ui_();
   const { sheet, col, rows } = pendingRows_();
-  if (!rows.length) return ui.alert('Không có dòng nào cần gửi.');
+  if (!rows.length) return notify_('Không có dòng nào cần gửi.');
 
   const quota = MailApp.getRemainingDailyQuota();
   if (rows.length > quota) {
-    return ui.alert('Hôm nay chỉ còn gửi được ' + quota + ' mail, cần ' + rows.length + '. Hãy gửi lại vào ngày mai.');
+    return notify_('Hôm nay chỉ còn gửi được ' + quota + ' mail, cần ' + rows.length + '. Hãy gửi lại vào ngày mai.');
   }
   const list = rows.map(r => '• ' + r.name + ' <' + r.email + '>').join('\n');
-  const ok = ui.alert('Gửi mail certificate cho ' + rows.length + ' học viên?', list, ui.ButtonSet.YES_NO);
-  if (ok !== ui.Button.YES) return;
+  if (ui) {
+    const ok = ui.alert('Gửi mail certificate cho ' + rows.length + ' học viên?', list, ui.ButtonSet.YES_NO);
+    if (ok !== ui.Button.YES) return;
+  } else {
+    console.log('Gửi cho:\n' + list);
+  }
 
   const { sent, failed } = sendRows_(sheet, col, rows);
-  ui.alert('Đã gửi ' + sent + '/' + rows.length + ' mail.' + (failed.length ? '\n\nLỗi:\n' + failed.join('\n') : ''));
+  notify_('Đã gửi ' + sent + '/' + rows.length + ' mail.' + (failed.length ? '\n\nLỗi:\n' + failed.join('\n') : ''));
 }
 
 // ---------- helpers ----------
+
+/** Trả về Ui khi chạy từ Sheet đang mở; null khi chạy bằng nút Run hoặc theo lịch. */
+function ui_() {
+  try { return SpreadsheetApp.getUi(); } catch (e) { return null; }
+}
+
+/** Hiện hộp thoại trong Sheet; khi chạy bằng nút Run thì ghi vào Execution log. */
+function notify_(msg) {
+  const ui = ui_();
+  if (ui) ui.alert(msg); else console.log(msg);
+}
 
 function sendRows_(sheet, col, rows) {
   let sent = 0;
@@ -136,7 +153,8 @@ function sendRows_(sheet, col, rows) {
 }
 
 function pendingRows_() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(CFG.tab);
+  const book = SpreadsheetApp.getActive() || SpreadsheetApp.openById(CFG.sheetId);
+  const sheet = book.getSheetByName(CFG.tab);
   if (!sheet) throw new Error('Không tìm thấy tab ' + CFG.tab);
   const values = sheet.getDataRange().getDisplayValues();
   const head = values[0].map(h => String(h).trim().toLowerCase());
