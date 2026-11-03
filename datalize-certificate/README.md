@@ -38,6 +38,7 @@ Mã nằm ở `apps-script/send_cert_mail.gs`. **Cài 1 lần:** đăng nhập G
 - Nội dung mail: tên học viên, khoá, link + mã cert, hướng dẫn tải PDF/PNG và **Add to LinkedIn profile**. Cột `review`/`note` **không** được đưa vào mail.
 - Gmail cá nhân gửi tối đa khoảng 100 mail/ngày qua Apps Script, Google Workspace khoảng 1.500. Script kiểm tra hạn mức trước khi gửi.
 - Sửa nội dung mail, tên khoá hoặc `replyTo` ở khối `CFG` đầu file, rồi dán lại vào Apps Script.
+- **Gửi tự động:** menu **Datalize → Bật gửi tự động (mỗi giờ)**, bấm bằng tài khoản Datalize. Mỗi giờ script tự gửi cho dòng đủ điều kiện, nhưng chỉ khi trang cert đã online (link trả về 200), nên học viên không nhận link 404 lúc hosting chưa deploy xong. Tắt bằng **Tắt gửi tự động**. Nhật ký chạy xem ở Apps Script → **Executions**.
 
 **Thu hồi cert cấp sai:** đổi status của dòng đó sang **Revoked** rồi bấm `issue.bat`; trang cert sẽ hiện REVOKED. Không xoá dòng và không xoá thư mục.
 

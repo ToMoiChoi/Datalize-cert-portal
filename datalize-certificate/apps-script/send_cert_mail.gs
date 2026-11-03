@@ -12,6 +12,9 @@
  * Gửi xong, script ghi thời gian vào emailed_at, nên bấm lại cũng không gửi trùng.
  * Muốn gửi lại cho một người (vd. sau khi sửa tên): xoá ô emailed_at của dòng đó rồi bấm gửi.
  * Cột review/note KHÔNG được đưa vào mail.
+ *
+ * Gửi tự động: menu Datalize → "Bật gửi tự động (mỗi giờ)". Từ đó, sau khi issue.bat đổi dòng sang Issued
+ * và trang cert đã online, mail tự đi trong vòng 1 giờ, không cần bấm gì. Tắt bằng "Tắt gửi tự động".
  */
 
 const CFG = {
@@ -28,7 +31,58 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('Datalize')
     .addItem('Gửi thử 1 mail cho tôi', 'sendTestToMe')
     .addItem('Gửi mail certificate', 'sendCertMails')
+    .addSeparator()
+    .addItem('Bật gửi tự động (mỗi giờ)', 'enableAutoSend')
+    .addItem('Tắt gửi tự động', 'disableAutoSend')
     .addToUi();
+}
+
+// ---------- gửi tự động ----------
+// Khi bật, Google chạy autoSendCertMails() mỗi giờ bằng tài khoản của người đã bật.
+// Chỉ gửi khi trang cert đã online (link trả về 200), để học viên không nhận link 404 khi hosting chưa deploy xong.
+
+function enableAutoSend() {
+  disableAutoSend_();
+  ScriptApp.newTrigger('autoSendCertMails').timeBased().everyHours(1).create();
+  SpreadsheetApp.getUi().alert('Đã bật gửi tự động. Mỗi giờ script sẽ gửi mail cho các dòng Issued chưa gửi, '
+    + 'từ tài khoản ' + Session.getActiveUser().getEmail() + '.');
+}
+
+function disableAutoSend() {
+  const n = disableAutoSend_();
+  SpreadsheetApp.getUi().alert(n ? 'Đã tắt gửi tự động.' : 'Gửi tự động đang không bật.');
+}
+
+function disableAutoSend_() {
+  let n = 0;
+  ScriptApp.getProjectTriggers().forEach(t => {
+    if (t.getHandlerFunction() === 'autoSendCertMails') { ScriptApp.deleteTrigger(t); n++; }
+  });
+  return n;
+}
+
+function autoSendCertMails() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return;          // một lần chạy khác đang gửi
+  try {
+    const { sheet, col, rows } = pendingRows_();
+    const live = rows.filter(r => isLive_(r.link));
+    const quota = MailApp.getRemainingDailyQuota();
+    const res = sendRows_(sheet, col, live.slice(0, quota));
+    if (res.failed.length) console.error('Gửi lỗi:\n' + res.failed.join('\n'));
+    console.log('Tự động: gửi ' + res.sent + ', chờ trang online ' + (rows.length - live.length)
+      + ', để mai vì hết hạn mức ' + Math.max(0, live.length - quota));
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function isLive_(url) {
+  try {
+    return UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true }).getResponseCode() === 200;
+  } catch (e) {
+    return false;
+  }
 }
 
 /** Gửi mail của dòng đầu tiên đủ điều kiện tới chính người đang bấm, để xem trước. Không ghi emailed_at. */
@@ -57,6 +111,13 @@ function sendCertMails() {
   const ok = ui.alert('Gửi mail certificate cho ' + rows.length + ' học viên?', list, ui.ButtonSet.YES_NO);
   if (ok !== ui.Button.YES) return;
 
+  const { sent, failed } = sendRows_(sheet, col, rows);
+  ui.alert('Đã gửi ' + sent + '/' + rows.length + ' mail.' + (failed.length ? '\n\nLỗi:\n' + failed.join('\n') : ''));
+}
+
+// ---------- helpers ----------
+
+function sendRows_(sheet, col, rows) {
   let sent = 0;
   const failed = [];
   for (const r of rows) {
@@ -65,16 +126,14 @@ function sendCertMails() {
       GmailApp.sendEmail(r.email, msg.subject, msg.text, mailOptions_(msg.html));
       sheet.getRange(r.rowNum, col.emailed_at + 1)
         .setValue(Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm'));
+      SpreadsheetApp.flush();               // ghi ngay, để lỗi giữa chừng không làm gửi trùng lần sau
       sent++;
     } catch (e) {
       failed.push(r.name + ': ' + e.message);
     }
   }
-  SpreadsheetApp.flush();
-  ui.alert('Đã gửi ' + sent + '/' + rows.length + ' mail.' + (failed.length ? '\n\nLỗi:\n' + failed.join('\n') : ''));
+  return { sent, failed };
 }
-
-// ---------- helpers ----------
 
 function pendingRows_() {
   const sheet = SpreadsheetApp.getActive().getSheetByName(CFG.tab);
